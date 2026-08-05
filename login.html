@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}PhishGuard — Log In{% endblock %}
+{% block content %}
+  <div class="auth-wrap">
+    <p class="eyebrow">Welcome back</p>
+    <h1>Log In</h1>
+    <p class="subtitle">Log in to your account.</p>
+
+    <div class="card auth-card">
+      <form method="POST">
+        <label class="field-label">Username</label>
+        <input type="text" name="username" placeholder="your_username" autocomplete="username" required />
+        <label class="field-label">Password</label>
+        <input type="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+        <button type="submit" class="auth-submit">Log In</button>
+      </form>
+    </div>
+    <p class="auth-switch">Don't have an account? <a href="{{ url_for('register') }}">Sign up free</a></p>
+    <p class="auth-switch"><a href="{{ url_for('index') }}">Continue as guest →</a></p>
+  </div>
+{% endblock %}

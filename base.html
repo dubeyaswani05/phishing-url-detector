@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}PhishGuard{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('index') }}" class="brand">
+      <span class="brand-mark">&#128737;</span> PhishGuard
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}" class="{{ 'active' if request.path == '/' }}">Scan</a>
+      <a href="{{ url_for('bulk') }}" class="{{ 'active' if request.path == '/bulk' }}">Bulk Scan</a>
+      {% if current_user %}
+      {% endif %}
+    </div>
+    <div class="nav-auth">
+      {% if current_user %}
+        <span class="nav-username">{{ current_user['username'] }}</span>
+        <a href="{{ url_for('logout') }}" class="nav-btn-ghost">Log out</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="nav-btn-ghost">Log in</a>
+        <a href="{{ url_for('register') }}" class="nav-btn">Sign up</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <div class="wrap">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

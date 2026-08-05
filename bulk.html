@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}PhishGuard — Bulk Scan{% endblock %}
+{% block content %}
+
+  <p class="eyebrow">Scan many at once</p>
+  <h1>Bulk URL Scanner</h1>
+  <p class="subtitle">
+    Paste up to 200 URLs (one per line) or upload a CSV file with URLs
+    in the first column. All results appear instantly below.
+  </p>
+
+  <div class="card">
+    <form method="POST" enctype="multipart/form-data" id="bulk-form">
+
+      <label class="field-label">Paste URLs — one per line</label>
+      <textarea name="urls" id="bulk-urls" rows="7"
+        placeholder="https://www.google.com&#10;http://icicibank-secure-verify9921.tk/account/update&#10;http://192.168.4.55/paypal/signin.php"></textarea>
+
+      <div class="or-divider"><span>or</span></div>
+
+      <label class="field-label">Upload a CSV file (URLs in first column)</label>
+      <div class="file-upload-wrap">
+        <input type="file" name="csvfile" id="csvfile" accept=".csv,.txt" />
+        <label for="csvfile" class="file-label">
+          <span class="file-icon">&#128196;</span>
+          <span id="file-name">Choose CSV file…</span>
+        </label>
+      </div>
+
+      <button type="submit" class="auth-submit" style="margin-top:18px;">
+        Scan All URLs
+      </button>
+    </form>
+  </div>
+
+  {% if error %}
+    <div class="flash flash-error">{{ error }}</div>
+  {% endif %}
+
+  {% if results %}
+  <div class="bulk-summary">
+    <span class="bulk-total">{{ results|length }} URL{{ 's' if results|length != 1 }} scanned</span>
+    <span class="bulk-badge badge-threat">{{ phishing_count }} phishing</span>
+    <span class="bulk-badge badge-safe">{{ results|length - phishing_count }} legitimate</span>
+  </div>
+
+  <div class="card history-card">
+    <table class="history-table bulk-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>URL &amp; Breakdown</th>
+          <th>Why</th>
+          <th>Verdict</th>
+          <th>Confidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+        <tr class="{{ 'row-threat' if r.is_phishing else 'row-safe' }}">
+          <td class="row-num">{{ loop.index }}</td>
+          <td class="history-url bulk-url-cell">
+            <div class="url-breakdown small">{{ r.breakdown }}</div>
+          </td>
+          <td class="reason-cell">{{ r.reason | capitalize }}</td>
+          <td>
+            <span class="badge {{ 'badge-threat' if r.is_phishing else 'badge-safe' }}">
+              {{ r.verdict }}
+            </span>
+          </td>
+          <td class="conf-cell">{{ r.confidence }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <script>
+    document.getElementById('csvfile').addEventListener('change', function() {
+      const name = this.files[0] ? this.files[0].name : 'Choose CSV file…';
+      document.getElementById('file-name').textContent = name;
+    });
+  </script>
+{% endblock %}
